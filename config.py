@@ -18,7 +18,6 @@
 #####################################
 
 studentsDetails = {
-"NETID_stud1": ("NAME", "STONY ID #"),
-
-"NETID_stud2": ("NAME", "STONY ID #")
+"roukaour": ("Oukaour_Remy", "107122849"),
+"yang16": ("Yang_Jian", "110168771"),
 }
