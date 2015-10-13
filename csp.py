@@ -6,9 +6,22 @@ import gameNode
 # you need to implement five funcitons here
 ###########################################
 
-def backtrackingHelper(node):
+def backtracking(filename):
+	###
+	# use backtracking to solve sudoku puzzle here,
+	# return the solution in the form of list of
+	# list as describe in the PDF with # of consistency
+	# checks done
+	###
+	node = gameNode.gameNode()
+	if not node.load_game(filename):
+		return ("Error: Fail Load", 0)
+	if backtracking_helper(node):
+		return node.solution()
+	return ("Error: No Solution", 0)
+
+def backtracking_helper(node):
 	if node.solved():
-		# print node
 		return True
 	for i, j in product(xrange(node.size), xrange(node.size)):
 		if node.gameStatus[i][j] != 0:
@@ -21,23 +34,6 @@ def backtrackingHelper(node):
 		return False
 	return False
 
-def backtracking(filename):
-	###
-	# use backtracking to solve sudoku puzzle here,
-	# return the solution in the form of list of
-	# list as describe in the PDF with # of consistency
-	# checks done
-	###
-	node = gameNode.gameNode()
-	if not node.load_game(filename):
-		return ("Error: Fail Load", 0)
-	if backtrackingHelper(node):
-		return node.solution()
-	return ("Error: No Solution", 0)
-
-def backtrackingMRVHelper(node):
-	return False
-
 def backtrackingMRV(filename):
 	###
 	# use backtracking + MRV to solve sudoku puzzle here,
@@ -48,11 +44,11 @@ def backtrackingMRV(filename):
 	node = gameNode.gameNode()
 	if not node.load_game(filename):
 		return ("Error: Fail Load", 0)
-	if backtrackingMRV(node):
+	if backtrackingMRV_helper(node):
 		return node.solution()
 	return ("Error: No Solution", 0)
 
-def backtrackingMRVfwdHelper(node):
+def backtrackingMRV_helper(node):
 	return False
 
 def backtrackingMRVfwd(filename):
@@ -66,9 +62,12 @@ def backtrackingMRVfwd(filename):
 	node = gameNode.gameNode()
 	if not node.load_game(filename):
 		return ("Error: Fail Load", 0)
-	if backtrackingMRVfwdHelper(node):
+	if backtrackingMRVfwd_helper(node):
 		return node.solution()
-	return ([[],[]], 0)
+	return ("Error: No Solution", 0)
+
+def backtrackingMRVfwd_helper(node):
+	return False
 
 def backtrackingMRVcp(filename):
 	###
@@ -77,7 +76,15 @@ def backtrackingMRVcp(filename):
 	# list as describe in the PDF with # of consistency
 	# checks done
 	###
-	return ([[],[]], 0)
+	node = gameNode.gameNode()
+	if not node.load_game(filename):
+		return ("Error: Fail Load", 0)
+	if backtrackingMRVcp_helper(node):
+		return node.solution()
+	return ("Error: No Solution", 0)
+
+def backtrackingMRVcp_helper(filename):
+	return False
 
 def minConflict(filename):
 	###
@@ -86,4 +93,12 @@ def minConflict(filename):
 	# list as describe in the PDF with # of consistency
 	# checks done
 	###
-	return ([[]], 0)
+	node = gameNode.gameNode()
+	if not node.load_game(filename):
+		return ("Error: Fail Load", 0)
+	if minConflict_helper(node):
+		return node.solution()
+	return ("Error: No Solution", 0)
+
+def minConflict_helper(filename):
+	return False
