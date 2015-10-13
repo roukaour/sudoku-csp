@@ -68,7 +68,6 @@ class gameNode():
 			return []
 		i, j = pos
 		invalid_moves = set()
-		# block
 		bi = i // self.M * self.M
 		bj = j // self.K * self.K
 		for k in xrange(self.N):
