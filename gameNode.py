@@ -12,7 +12,7 @@ class gameNode():
 		self.num_checks = 0
 
 	def __str__(self):
-		return ('\n' + '-'*(3 * self.N + 2 * self.K - 3) + '\n').join(
+		return ('\n' + '-'*(3 * self.N + 2 * self.M - 3) + '\n').join(
 			'\n'.join(t) for t in chunk([' | '.join(' '.join(s) for s in chunk([
 			str(x).rjust(2) for x in r], self.K)) for r in self.board], self.M))
 
