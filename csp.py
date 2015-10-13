@@ -21,13 +21,14 @@ def backtracking(filename):
 	return ("Error: No Solution", 0)
 
 def backtracking_helper(node):
+	node.num_checks += 1
 	if node.solved():
 		print node
 		return True
-	try:
-		pos = next(node.get_unassigned_positions())
-	except StopIteration:
+	unassigned = node.get_unassigned_positions()
+	if not unassigned:
 		return False
+	pos = unassigned[0]
 	for move in node.get_valid_moves(pos):
 		node[pos] = move
 		if backtracking_helper(node):
@@ -50,6 +51,19 @@ def backtrackingMRV(filename):
 	return ("Error: No Solution", 0)
 
 def backtrackingMRV_helper(node):
+	node.num_checks += 1
+	if node.solved():
+		print node
+		return True
+	unassigned = node.get_unassigned_positions()
+	if not unassigned:
+		return False
+	mrv_pos = min(unassigned, key=lambda m: len(node.get_valid_moves(m)))
+	for move in node.get_valid_moves(mrv_pos):
+		node[mrv_pos] = move
+		if backtrackingMRV_helper(node):
+			return True
+		del node[mrv_pos]
 	return False
 
 def backtrackingMRVfwd(filename):

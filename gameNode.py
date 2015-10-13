@@ -60,15 +60,12 @@ class gameNode():
 			return False
 
 	def get_unassigned_positions(self):
-		for pos in product(xrange(self.N), xrange(self.N)):
-			if not self[pos]:
-				yield pos
+		return [pos for pos in product(xrange(self.N), xrange(self.N)) if not self[pos]]
 
 	def get_valid_moves(self, pos):
 		assert self.board is not None
-		self.num_checks += 1
 		if self[pos]:
-			return ()
+			return []
 		i, j = pos
 		invalid_moves = set()
 		# block
@@ -78,4 +75,4 @@ class gameNode():
 			invalid_moves.add(self[i, k])
 			invalid_moves.add(self[k, j])
 			invalid_moves.add(self[bi + k // self.K, bj + k % self.K])
-		return (m for m in xrange(1, self.N + 1) if m not in invalid_moves)
+		return [m for m in xrange(1, self.N + 1) if m not in invalid_moves]
