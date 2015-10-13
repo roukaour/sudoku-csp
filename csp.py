@@ -22,16 +22,17 @@ def backtracking(filename):
 
 def backtracking_helper(node):
 	if node.solved():
+		print node
 		return True
-	for i, j in product(xrange(node.size), xrange(node.size)):
-		if node.gameStatus[i][j] != 0:
-			continue
-		for k in node.get_valid_moves(i, j):
-			node.set_value(i, j, k)
-			if backtrackingHelper(node):
-				return True
-			node.set_empty(i, j)
+	try:
+		pos = next(node.get_unassigned_positions())
+	except StopIteration:
 		return False
+	for move in node.get_valid_moves(pos):
+		node[pos] = move
+		if backtracking_helper(node):
+			return True
+		del node[pos]
 	return False
 
 def backtrackingMRV(filename):
