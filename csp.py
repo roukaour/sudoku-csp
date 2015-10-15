@@ -117,15 +117,19 @@ def minConflict(filename):
 	return ("Error: No Solution", 0)
 
 def minConflict_helper(node, max_steps=1000):
+	# initial complete assignment
+	# greedy minimal-conflict values for each variable
 	for pos in node.get_positions():
-		node[pos] = min(xrange(1, node.N + 1),
-			key=lambda m: node.count_conflicts(pos, m))
+		if not node.is_given(pos):
+			node[pos] = min(node.get_values(),
+				key=lambda m: node.count_conflicts(pos, m))
+	print node
 	for _ in xrange(max_steps):
 		if node.solved():
 			print node
 			return True
 		con_pos = random.choice(node.get_conflicted_positions())
-		lcv_move = min(xrange(1, node.N + 1),
-			key=lambda m: node.count_constraints(con_pos, m))
+		lcv_move = min(node.get_values(),
+			key=lambda m: node.count_conflicts(con_pos, m))
 		node[con_pos] = lcv_move
 	return False

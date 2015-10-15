@@ -7,7 +7,7 @@ def chunk(s, n):
 class gameNode():
 
 	def __init__(self):
-		self.board = None
+		self.board = self.given = None
 		self.N = self.M = self.K = 0
 		self.num_checks = 0
 
@@ -24,23 +24,24 @@ class gameNode():
 	def __setitem__(self, pos, value):
 		assert 0 < value <= self.N
 		i, j = pos
-		assert 0 <= i < self.N and 0 <= j < self.N
+		assert 0 <= i < self.N and 0 <= j < self.N and not self.given[i][j]
 		self.board[i][j] = value
 
 	def __delitem__(self, pos):
 		i, j = pos
-		assert 0 <= i < self.N and 0 <= j < self.N
+		assert 0 <= i < self.N and 0 <= j < self.N and not self.given[i][j]
 		self.board[i][j] = 0
 
 	def solved(self):
 		return (all(self[pos] for pos in self.get_positions()) and
-			not any(self.count_conflicts(pos, self[pos]) for pos in self.get_positions()))
+			not any(self.count_conflicts(pos) for pos in self.get_positions()))
 
 	def solution(self):
 		return (self.board, self.num_checks)
 
 	def load_game(self, filename):
 		self.board = []
+		self.given = []
 		try:
 			file = open(filename, 'r')
 			metadata = file.readline().strip().rstrip(';').split(',')
@@ -51,14 +52,19 @@ class gameNode():
 				line = file.readline()
 				elements = line.strip().rstrip(';').split(',')
 				elements = [0 if x == '-' else int(x) for x in elements]
+				givens = [False if x == 0 else True for x in elements]
 				self.board.append(elements)
+				self.given.append(givens)
 			file.close()
 			return True
 		except IOError as e:
 			print('Error:', e)
 			print('Error: fail to load the testcase from file %s' % filename)
-			self.board = None
+			self.board = self.given = None
 			return False
+
+	def get_values(self):
+		return xrange(1, self.N + 1)
 
 	def get_positions(self):
 		return list(product(xrange(self.N), xrange(self.N)))
@@ -68,7 +74,12 @@ class gameNode():
 
 	def get_conflicted_positions(self):
 		return [pos for pos in self.get_positions()
-			if self[pos] and self.count_conflicts(pos, self[pos])]
+			if self[pos] and not self.is_given(pos) and
+			self[pos] in (self[n] for n in self.get_neighbors(pos))]
+
+	def is_given(self, pos):
+		i, j = pos
+		return self.given[i][j]
 
 	def get_neighbors(self, pos):
 		i, j = pos
@@ -86,11 +97,15 @@ class gameNode():
 		if self[pos]:
 			return []
 		invalid_moves = {self[n] for n in self.get_neighbors(pos)}
-		return [m for m in xrange(1, self.N + 1) if m not in invalid_moves]
+		return [m for m in self.get_values() if m not in invalid_moves]
 
-	def count_constraints(self, pos, value):
+	def count_constraints(self, pos, value=None):
+		if value is None:
+			value = self[pos]
 		return len([n for n in self.get_neighbors(pos)
 			if not self[n] and value in self.get_valid_moves(n)])
 
-	def count_conflicts(self, pos, value):
+	def count_conflicts(self, pos, value=None):
+		if value is None:
+			value = self[pos]
 		return len([n for n in self.get_neighbors(pos) if self[n] == value])
