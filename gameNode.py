@@ -33,45 +33,53 @@ class gameNode():
 		self.board[i][j] = 0
 
 	def solved(self):
-		return all(self.board[i][j] for i in xrange(self.N) for j in xrange(self.N))
+		return all(self[i, j] for i in xrange(self.N) for j in xrange(self.N))
 
 	def solution(self):
 		return (self.board, self.num_checks)
 
 	def load_game(self, filename):
-		assert self.board is None
 		self.board = []
 		try:
-			f = open(filename, 'r')
-			metadata = f.readline().strip().rstrip(';').split(',')
+			file = open(filename, 'r')
+			metadata = file.readline().strip().rstrip(';').split(',')
 			self.N, self.M, self.K = (int(t) for t in metadata)
-			assert self.N == self.M * self.K
+			if self.N != self.M * self.K:
+				raise IOError('N != M * K')
 			for i in xrange(self.N):
-				line = f.readline()
+				line = file.readline()
 				elements = line.strip().rstrip(';').split(',')
 				elements = [0 if x == '-' else int(x) for x in elements]
 				self.board.append(elements)
-			f.close()
+			file.close()
 			return True
 		except IOError as e:
-			print("Error:", e)
-			print("Error: fail to load the testcase from file %s" % filename)
+			print('Error:', e)
+			print('Error: fail to load the testcase from file %s' % filename)
 			self.board = None
 			return False
 
 	def get_unassigned_positions(self):
 		return [pos for pos in product(xrange(self.N), xrange(self.N)) if not self[pos]]
 
-	def get_valid_moves(self, pos):
-		assert self.board is not None
-		if self[pos]:
-			return []
+	def get_neighbors(self, pos):
 		i, j = pos
-		invalid_moves = set()
 		bi = i // self.M * self.M
 		bj = j // self.K * self.K
+		neighbors = set()
 		for k in xrange(self.N):
-			invalid_moves.add(self[i, k])
-			invalid_moves.add(self[k, j])
-			invalid_moves.add(self[bi + k // self.K, bj + k % self.K])
+			neighbors.add((i, k))
+			neighbors.add((k, j))
+			neighbors.add((bi + k // self.K, bj + k % self.K))
+		neighbors.remove(pos)
+		return list(neighbors)
+
+	def get_valid_moves(self, pos):
+		if self[pos]:
+			return []
+		invalid_moves = {self[n] for n in self.get_neighbors(pos)}
 		return [m for m in xrange(1, self.N + 1) if m not in invalid_moves]
+
+	def count_constraints(self, pos, value):
+		return len([n for n in self.get_neighbors(pos)
+			if not self[n] and value in self.get_valid_moves(n)])

@@ -58,8 +58,10 @@ def backtrackingMRV_helper(node):
 	unassigned = node.get_unassigned_positions()
 	if not unassigned:
 		return False
-	mrv_pos = min(unassigned, key=lambda m: len(node.get_valid_moves(m)))
-	for move in node.get_valid_moves(mrv_pos):
+	mrv_pos = min(unassigned, key=lambda p: len(node.get_valid_moves(p)))
+	lcv_moves = sorted(node.get_valid_moves(mrv_pos),
+		key=lambda m: node.count_constraints(mrv_pos, m))
+	for move in lcv_moves:
 		node[mrv_pos] = move
 		if backtrackingMRV_helper(node):
 			return True
