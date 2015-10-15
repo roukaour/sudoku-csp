@@ -22,7 +22,6 @@ def backtracking(filename):
 def backtracking_helper(node):
 	node.num_checks += 1
 	if node.solved():
-		print node
 		return True
 	unassigned = node.get_unassigned_positions()
 	if not unassigned:
@@ -52,7 +51,6 @@ def backtrackingMRV(filename):
 def backtrackingMRV_helper(node):
 	node.num_checks += 1
 	if node.solved():
-		print node
 		return True
 	unassigned = node.get_unassigned_positions()
 	if not unassigned:
@@ -123,10 +121,8 @@ def minConflict_helper(node, max_steps=1000):
 		if not node.is_given(pos):
 			node[pos] = min(node.get_values(),
 				key=lambda m: node.count_conflicts(pos, m))
-	print node
 	for _ in xrange(max_steps):
 		if node.solved():
-			print node
 			return True
 		con_pos = random.choice(node.get_conflicted_positions())
 		lcv_move = min(node.get_values(),
