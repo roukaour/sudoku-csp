@@ -33,7 +33,8 @@ class gameNode():
 		self.board[i][j] = 0
 
 	def solved(self):
-		return all(self[i, j] for i in xrange(self.N) for j in xrange(self.N))
+		return (all(self[pos] for pos in self.get_positions()) and
+			not any(self.count_conflicts(pos, self[pos]) for pos in self.get_positions()))
 
 	def solution(self):
 		return (self.board, self.num_checks)
@@ -59,8 +60,15 @@ class gameNode():
 			self.board = None
 			return False
 
+	def get_positions(self):
+		return list(product(xrange(self.N), xrange(self.N)))
+
 	def get_unassigned_positions(self):
-		return [pos for pos in product(xrange(self.N), xrange(self.N)) if not self[pos]]
+		return [pos for pos in self.get_positions() if not self[pos]]
+
+	def get_conflicted_positions(self):
+		return [pos for pos in self.get_positions()
+			if self[pos] and self.count_conflicts(pos, self[pos])]
 
 	def get_neighbors(self, pos):
 		i, j = pos
@@ -83,3 +91,6 @@ class gameNode():
 	def count_constraints(self, pos, value):
 		return len([n for n in self.get_neighbors(pos)
 			if not self[n] and value in self.get_valid_moves(n)])
+
+	def count_conflicts(self, pos, value):
+		return len([n for n in self.get_neighbors(pos) if self[n] == value])

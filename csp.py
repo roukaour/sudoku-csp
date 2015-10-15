@@ -1,5 +1,4 @@
-from itertools import product
-
+import random
 import gameNode
 
 ###########################################
@@ -100,7 +99,7 @@ def backtrackingMRVcp(filename):
 		return node.solution()
 	return ("Error: No Solution", 0)
 
-def backtrackingMRVcp_helper(filename):
+def backtrackingMRVcp_helper(node):
 	return False
 
 def minConflict(filename):
@@ -117,5 +116,16 @@ def minConflict(filename):
 		return node.solution()
 	return ("Error: No Solution", 0)
 
-def minConflict_helper(filename):
+def minConflict_helper(node, max_steps=1000):
+	for pos in node.get_positions():
+		node[pos] = min(xrange(1, node.N + 1),
+			key=lambda m: node.count_conflicts(pos, m))
+	for _ in xrange(max_steps):
+		if node.solved():
+			print node
+			return True
+		con_pos = random.choice(node.get_conflicted_positions())
+		lcv_move = min(xrange(1, node.N + 1),
+			key=lambda m: node.count_constraints(con_pos, m))
+		node[con_pos] = lcv_move
 	return False
