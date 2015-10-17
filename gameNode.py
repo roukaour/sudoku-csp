@@ -33,11 +33,12 @@ class gameNode(object):
 		assert 0 <= i < self.N and 0 <= j < self.N
 		return self.board[i][j]
 
-	def __setitem__(self, pos, value):
-		assert 0 < value <= self.N
+	def __setitem__(self, pos, domain):
+		domain = {domain} if isinstance(domain, int) else domain
+		assert all(0 < v <= self.N for v in domain)
 		i, j = pos
 		assert 0 <= i < self.N and 0 <= j < self.N and not self[pos].given
-		self[pos].domain = {value}
+		self[pos].domain = domain
 
 	def __delitem__(self, pos):
 		i, j = pos
@@ -115,3 +116,30 @@ class gameNode(object):
 		if value is None:
 			value = self[pos].value()
 		return len([n for n in self.get_neighbors(pos) if self[n].value() == value])
+
+	def propagate_constraints(self):
+		# AC-3
+		queue = [(pos1, pos2) for pos1, pos2 in
+			product(self.get_positions(), self.get_positions()) if pos1 != pos2]
+		while queue:
+			pos1, pos2 = queue.pop()
+			if self[pos2].value() in self[pos1].domain:
+				self[pos1].domain -= self[pos2].domain
+				if not self[pos1].domain:
+					return False
+				for pos3 in set(self.get_neighbors(pos1)) - {pos2}:
+					queue.append((pos3, pos1))
+		return True
+
+	def forward_checking(self, pos):
+		# AC-3 with limited queue
+		queue = [(n, pos) for n in self.get_neighbors(pos) if not self[n].value()]
+		while queue:
+			pos1, pos2 = queue.pop()
+			if self[pos2].value() in self[pos1].domain:
+				self[pos1].domain -= self[pos2].domain
+				if not self[pos1].domain:
+					return False
+				for pos3 in set(self.get_neighbors(pos1)) - {pos2}:
+					queue.append((pos3, pos1))
+		return True

@@ -1,5 +1,6 @@
-import random
 import gameNode
+import random
+import copy
 
 ###########################################
 # you need to implement five funcitons here
@@ -28,10 +29,11 @@ def backtracking_helper(node):
 		return False
 	pos = unassigned[0]
 	for move in node.get_valid_moves(pos):
+		domain = node[pos].domain
 		node[pos] = move
 		if backtracking_helper(node):
 			return True
-		del node[pos]
+		node[pos] = domain
 	return False
 
 def backtrackingMRV(filename):
@@ -59,10 +61,11 @@ def backtrackingMRV_helper(node):
 	lcv_moves = sorted(node.get_valid_moves(mrv_pos),
 		key=lambda m: node.count_constraints(mrv_pos, m))
 	for move in lcv_moves:
+		domain = node[mrv_pos].domain
 		node[mrv_pos] = move
 		if backtrackingMRV_helper(node):
 			return True
-		del node[mrv_pos]
+		node[mrv_pos] = domain
 	return False
 
 def backtrackingMRVfwd(filename):
@@ -81,6 +84,21 @@ def backtrackingMRVfwd(filename):
 	return ("Error: No Solution", 0)
 
 def backtrackingMRVfwd_helper(node):
+	node.num_checks += 1
+	if node.solved():
+		return True
+	unassigned = node.get_unassigned_positions()
+	if not unassigned:
+		return False
+	mrv_pos = min(unassigned, key=lambda p: len(node.get_valid_moves(p)))
+	lcv_moves = sorted(node.get_valid_moves(mrv_pos),
+		key=lambda m: node.count_constraints(mrv_pos, m))
+	for move in lcv_moves:
+		backup_board = copy.deepcopy(node.board)
+		node[mrv_pos] = move
+		if node.forward_checking(mrv_pos) and backtrackingMRVfwd_helper(node):
+			return True
+		node.board = backup_board
 	return False
 
 def backtrackingMRVcp(filename):
@@ -98,6 +116,21 @@ def backtrackingMRVcp(filename):
 	return ("Error: No Solution", 0)
 
 def backtrackingMRVcp_helper(node):
+	node.num_checks += 1
+	if node.solved():
+		return True
+	unassigned = node.get_unassigned_positions()
+	if not unassigned:
+		return False
+	mrv_pos = min(unassigned, key=lambda p: len(node.get_valid_moves(p)))
+	lcv_moves = sorted(node.get_valid_moves(mrv_pos),
+		key=lambda m: node.count_constraints(mrv_pos, m))
+	for move in lcv_moves:
+		backup_board = copy.deepcopy(node.board)
+		node[mrv_pos] = move
+		if node.propagate_constraints() and backtrackingMRV_helper(node):
+			return True
+		node.board = backup_board
 	return False
 
 def minConflict(filename):
@@ -114,7 +147,7 @@ def minConflict(filename):
 		return node.solution()
 	return ("Error: No Solution", 0)
 
-def minConflict_helper(node, max_steps=1000):
+def minConflict_helper(node, max_steps=3000):
 	# initial complete assignment
 	# greedy minimal-conflict values for each variable
 	for pos in node.get_positions():
