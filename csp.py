@@ -155,6 +155,7 @@ def minConflict_helper(node, max_steps=3000):
 			node[pos] = min(node.get_values(),
 				key=lambda m: node.count_conflicts(pos, m))
 	for _ in xrange(max_steps):
+		node.num_checks += 1
 		if node.solved():
 			return True
 		con_pos = random.choice(node.get_conflicted_positions())
