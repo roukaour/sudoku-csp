@@ -118,7 +118,7 @@ def minConflict_helper(node, max_steps=1000):
 	# initial complete assignment
 	# greedy minimal-conflict values for each variable
 	for pos in node.get_positions():
-		if not node.is_given(pos):
+		if not node[pos].given:
 			node[pos] = min(node.get_values(),
 				key=lambda m: node.count_conflicts(pos, m))
 	for _ in xrange(max_steps):
