@@ -118,22 +118,20 @@ class gameNode(object):
 		return len([n for n in self.get_neighbors(pos) if self[n].value() == value])
 
 	def propagate_constraints(self):
-		# AC-3
-		queue = [(pos1, pos2) for pos1, pos2 in
-			product(self.get_positions(), self.get_positions()) if pos1 != pos2]
-		while queue:
-			pos1, pos2 = queue.pop()
-			if self[pos2].value() in self[pos1].domain:
-				self[pos1].domain -= self[pos2].domain
-				if not self[pos1].domain:
-					return False
-				for pos3 in set(self.get_neighbors(pos1)) - {pos2}:
-					queue.append((pos3, pos1))
-		return True
+		# Use AC-3 with all constrained pairs
+		queue = []
+		for pos1 in self.get_positions():
+			for pos2 in self.get_neighbors(pos1):
+				if (pos2, pos1) not in queue:
+					queue.append((pos1, pos2))
+		return self._ac3(queue)
 
 	def forward_checking(self, pos):
-		# AC-3 with limited queue
+		# Use AC-3 with limited queue
 		queue = [(n, pos) for n in self.get_neighbors(pos) if not self[n].value()]
+		return self._ac3(queue)
+
+	def _ac3(self, queue):
 		while queue:
 			pos1, pos2 = queue.pop()
 			if self[pos2].value() in self[pos1].domain:
