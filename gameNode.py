@@ -46,6 +46,7 @@ class gameNode(object):
 		self[pos].domain = set(self.get_values())
 
 	def solved(self):
+		self.num_checks += 1
 		return (all(self[pos].value() for pos in self.get_positions()) and
 			not any(self.count_conflicts(pos) for pos in self.get_positions()))
 

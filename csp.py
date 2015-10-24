@@ -21,7 +21,6 @@ def backtracking(filename):
 	return ("Error: No Solution", 0)
 
 def backtracking_helper(node):
-	node.num_checks += 1
 	if node.solved():
 		return True
 	unassigned = node.get_unassigned_positions()
@@ -51,7 +50,6 @@ def backtrackingMRV(filename):
 	return ("Error: No Solution", 0)
 
 def backtrackingMRV_helper(node):
-	node.num_checks += 1
 	if node.solved():
 		return True
 	unassigned = node.get_unassigned_positions()
@@ -84,7 +82,6 @@ def backtrackingMRVfwd(filename):
 	return ("Error: No Solution", 0)
 
 def backtrackingMRVfwd_helper(node):
-	node.num_checks += 1
 	if node.solved():
 		return True
 	unassigned = node.get_unassigned_positions()
@@ -116,7 +113,6 @@ def backtrackingMRVcp(filename):
 	return ("Error: No Solution", 0)
 
 def backtrackingMRVcp_helper(node):
-	node.num_checks += 1
 	if node.solved():
 		return True
 	unassigned = node.get_unassigned_positions()
@@ -147,7 +143,7 @@ def minConflict(filename):
 		return node.solution()
 	return ("Error: No Solution", 0)
 
-def minConflict_helper(node, max_steps=3000):
+def minConflict_helper(node, max_steps=10000):
 	# initial complete assignment
 	# greedy minimal-conflict values for each variable
 	for pos in node.get_positions():
@@ -155,7 +151,6 @@ def minConflict_helper(node, max_steps=3000):
 			node[pos] = min(node.get_values(),
 				key=lambda m: node.count_conflicts(pos, m))
 	for _ in xrange(max_steps):
-		node.num_checks += 1
 		if node.solved():
 			return True
 		con_pos = random.choice(node.get_conflicted_positions())
