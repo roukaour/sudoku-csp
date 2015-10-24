@@ -18,7 +18,7 @@ def backtracking(filename):
 		return ("Error: Fail Load", 0)
 	if backtracking_helper(node):
 		return node.solution()
-	return ("Error: No Solution", 0)
+	return ("Error: No Solution", node.num_checks)
 
 def backtracking_helper(node):
 	# Based on Figure 6.5 from page 215 of the textbook
@@ -48,7 +48,7 @@ def backtrackingMRV(filename):
 		return ("Error: Fail Load", 0)
 	if backtrackingMRV_helper(node):
 		return node.solution()
-	return ("Error: No Solution", 0)
+	return ("Error: No Solution", node.num_checks)
 
 def backtrackingMRV_helper(node):
 	# Based on Figure 6.5 from page 215 of the textbook
@@ -81,7 +81,7 @@ def backtrackingMRVfwd(filename):
 		return ("Error: Fail Load", 0)
 	if backtrackingMRVfwd_helper(node):
 		return node.solution()
-	return ("Error: No Solution", 0)
+	return ("Error: No Solution", node.num_checks)
 
 def backtrackingMRVfwd_helper(node):
 	# Based on Figure 6.5 from page 215 of the textbook
@@ -113,7 +113,7 @@ def backtrackingMRVcp(filename):
 		return ("Error: Fail Load", 0)
 	if backtrackingMRVcp_helper(node):
 		return node.solution()
-	return ("Error: No Solution", 0)
+	return ("Error: No Solution", node.num_checks)
 
 def backtrackingMRVcp_helper(node):
 	# Based on Figure 6.5 from page 215 of the textbook
@@ -145,7 +145,7 @@ def minConflict(filename):
 		return ("Error: Fail Load", 0)
 	if minConflict_helper(node):
 		return node.solution()
-	return ("Error: No Solution", 0)
+	return ("Error: No Solution", node.num_checks)
 
 def minConflict_helper(node, max_steps=10000):
 	# Based on Figure 6.8 from page 221 of the textbook
