@@ -128,7 +128,7 @@ def backtrackingMRVcp_helper(node):
 	for move in lcv_moves:
 		backup_board = copy.deepcopy(node.board)
 		node[mrv_pos] = move
-		if node.propagate_constraints() and backtrackingMRV_helper(node):
+		if node.propagate_constraints() and backtrackingMRVcp_helper(node):
 			return True
 		node.board = backup_board
 	return False
