@@ -86,8 +86,7 @@ class gameNode(object):
 
 	def get_conflicted_positions(self):
 		return [pos for pos in self.get_positions()
-			if self[pos].value() and not self[pos].given and
-			self[pos].value() in (self[n].value() for n in self.get_neighbors(pos))]
+			if self[pos].value() and not self[pos].given and self.count_conflicts(pos)]
 
 	def get_neighbors(self, pos):
 		i, j = pos
