@@ -21,6 +21,7 @@ def backtracking(filename):
 	return ("Error: No Solution", 0)
 
 def backtracking_helper(node):
+	# Based on Figure 6.5 from page 215 of the textbook
 	if node.solved():
 		return True
 	unassigned = node.get_unassigned_positions()
@@ -50,6 +51,7 @@ def backtrackingMRV(filename):
 	return ("Error: No Solution", 0)
 
 def backtrackingMRV_helper(node):
+	# Based on Figure 6.5 from page 215 of the textbook
 	if node.solved():
 		return True
 	unassigned = node.get_unassigned_positions()
@@ -82,6 +84,7 @@ def backtrackingMRVfwd(filename):
 	return ("Error: No Solution", 0)
 
 def backtrackingMRVfwd_helper(node):
+	# Based on Figure 6.5 from page 215 of the textbook
 	if node.solved():
 		return True
 	unassigned = node.get_unassigned_positions()
@@ -113,6 +116,7 @@ def backtrackingMRVcp(filename):
 	return ("Error: No Solution", 0)
 
 def backtrackingMRVcp_helper(node):
+	# Based on Figure 6.5 from page 215 of the textbook
 	if node.solved():
 		return True
 	unassigned = node.get_unassigned_positions()
@@ -144,6 +148,7 @@ def minConflict(filename):
 	return ("Error: No Solution", 0)
 
 def minConflict_helper(node, max_steps=10000):
+	# Based on Figure 6.8 from page 221 of the textbook
 	# initial complete assignment
 	# greedy minimal-conflict values for each variable
 	for pos in node.get_positions():

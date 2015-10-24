@@ -70,8 +70,8 @@ class gameNode(object):
 			file.close()
 			return True
 		except IOError as e:
-			print('Error:', e)
-			print('Error: fail to load the testcase from file %s' % filename)
+			print 'Error:', e
+			print 'Error: fail to load the testcase from file', filename
 			self.board = None
 			return False
 
@@ -132,6 +132,7 @@ class gameNode(object):
 		return self._ac3(queue)
 
 	def _ac3(self, queue):
+		# Based on Figure 6.3 from page 209 of the textbook
 		while queue:
 			pos1, pos2 = queue.pop()
 			if self[pos2].value() in self[pos1].domain:
