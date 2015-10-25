@@ -346,19 +346,19 @@ Piazza) to compare the results.
 \hline
 & BT & BT+MRV & BT+MRV+FC & BT+MRV+CP & Min-conflicts \\
 \hline
-Empty ($9 \times 9$) & 392 & 82 & 49 & 82 & N/A \\
+Empty ($9 \times 9$) & 392 & 82 & 49 & 82 & $>$10K \\
 \hline
 Empty($12 \times 12$) & 7426 & 145 & 95 & 145 & 40 \\
 \hline
-board1 & 210 & 77 & 74 & 75 & 1 \\
+board1 & 210 & 77 & 74 & 75 & $>$10K \\
 \hline
-board2 & 46019 & 2482 & 2458 & 1 & 1 \\
+board2 & 46019 & 2482 & 2458 & N/A & N/A \\
 \hline
-board3 & 0 & 1 & 1 & 1 & 1 \\
+board3 & N/A & 248 & 244 & 239 & $>$10K \\
 \hline
-board4 & 0 & 1 & 1 & 1 & 1 \\
+board4 & N/A & N/A & N/A & N/A & N/A \\
 \hline
-board5 & 0 & 1 & 1 & 1 & 1 \\
+board5 & N/A & N/A & N/A & N/A & N/A \\
 \hline
 \end{tabular}
 \caption{Expanded node counts for all algorithms in different test cases}
@@ -379,5 +379,14 @@ the progress as we expected and we learnt from the lectures.
 The min-conflicts algorithm sometimes does not solve a board, even with a high
 iteration limit. We suspect that this is because it uses random choices to solve
 the board, and sometimes those choices are not useful ones.
+
+\subsection{Best algorithm}
+
+We recommend using backtracking search with the MRV heuristic and forward checking.
+This algorithm made the fewest consistency checks in our testing. MRV + constraint
+propagation performed roughly the same as MRV by itself, but was much slower.
+(This may be due to an inefficient implementation of constraint propagation.)
+Min-heuristics sometimes made even fewer consistency checks than BT+MRV+FC, but
+other times it would fail to solve the board.
 
 \end{document}
