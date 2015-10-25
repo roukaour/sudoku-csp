@@ -16,6 +16,8 @@ def backtracking(filename):
 	node = gameNode.gameNode()
 	if not node.load_game(filename):
 		return ("Error: Fail Load", 0)
+	if node.hasconflict():
+		return ("Error: Has conflict", 1)
 	if backtracking_helper(node):
 		return node.solution()
 	return ("Error: No Solution", node.num_checks)
@@ -46,6 +48,8 @@ def backtrackingMRV(filename):
 	node = gameNode.gameNode()
 	if not node.load_game(filename):
 		return ("Error: Fail Load", 0)
+	if node.hasconflict():
+		return ("Error: Has conflict", 1)
 	if backtrackingMRV_helper(node):
 		return node.solution()
 	return ("Error: No Solution", node.num_checks)
@@ -79,6 +83,8 @@ def backtrackingMRVfwd(filename):
 	node = gameNode.gameNode()
 	if not node.load_game(filename):
 		return ("Error: Fail Load", 0)
+	if node.hasconflict():
+		return ("Error: Has conflict", 1)
 	if backtrackingMRVfwd_helper(node):
 		return node.solution()
 	return ("Error: No Solution", node.num_checks)
@@ -111,6 +117,8 @@ def backtrackingMRVcp(filename):
 	node = gameNode.gameNode()
 	if not node.load_game(filename):
 		return ("Error: Fail Load", 0)
+	if node.hasconflict():
+		return ("Error: Has conflict", 1)
 	if backtrackingMRVcp_helper(node):
 		return node.solution()
 	return ("Error: No Solution", node.num_checks)
@@ -128,7 +136,7 @@ def backtrackingMRVcp_helper(node):
 	for move in lcv_moves:
 		backup_board = copy.deepcopy(node.board)
 		node[mrv_pos] = move
-		if node.propagate_constraints() and backtrackingMRVcp_helper(node):
+		if node.propagate_constraints(mrv_pos) and backtrackingMRVcp_helper(node):
 			return True
 		node.board = backup_board
 	return False
@@ -143,6 +151,8 @@ def minConflict(filename):
 	node = gameNode.gameNode()
 	if not node.load_game(filename):
 		return ("Error: Fail Load", 0)
+	if node.hasconflict():
+		return ("Error: Has conflict", 1)
 	if minConflict_helper(node):
 		return node.solution()
 	return ("Error: No Solution", node.num_checks)

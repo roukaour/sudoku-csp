@@ -45,6 +45,18 @@ class gameNode(object):
 		assert 0 <= i < self.N and 0 <= j < self.N
 		self[pos].domain = set(self.get_values())
 
+	def hasconflict(self):
+		for pos in self.get_positions():
+			if self[pos].given:
+				v = self[pos].value()
+				neiber = self.get_neighbors(pos)
+				for n in neiber:
+					if v in self[n].domain:
+						print v, pos, self[pos].domain
+						print n, self[n].domain
+						return True
+		return False
+
 	def solved(self):
 		self.num_checks += 1
 		return (all(self[pos].value() for pos in self.get_positions()) and
@@ -68,6 +80,11 @@ class gameNode(object):
 					for (j, v) in enumerate(tokens)]
 				self.board.append(row)
 			file.close()
+
+			for pos in self.get_positions():
+				if not self[pos].given:
+					self[pos].domain = self.get_valid_moves(pos)
+
 			return True
 		except IOError as e:
 			print 'Error:', e
@@ -117,13 +134,12 @@ class gameNode(object):
 			value = self[pos].value()
 		return len([n for n in self.get_neighbors(pos) if self[n].value() == value])
 
-	def propagate_constraints(self):
+	def propagate_constraints(self, updated_pos):
 		# Use AC-3 with all constrained pairs
 		queue = []
-		for pos1 in self.get_positions():
-			for pos2 in self.get_neighbors(pos1):
-				if (pos2, pos1) not in queue:
-					queue.append((pos1, pos2))
+		pos1 = updated_pos
+		for pos2 in self.get_neighbors(pos1):
+			queue.append((pos1, pos2))
 		return self._ac3(queue)
 
 	def forward_checking(self, pos):
@@ -134,11 +150,15 @@ class gameNode(object):
 	def _ac3(self, queue):
 		# Based on Figure 6.3 from page 209 of the textbook
 		while queue:
-			pos1, pos2 = queue.pop()
-			if self[pos2].value() in self[pos1].domain:
-				self[pos1].domain -= self[pos2].domain
-				if not self[pos1].domain:
-					return False
-				for pos3 in set(self.get_neighbors(pos1)) - {pos2}:
-					queue.append((pos3, pos1))
+			new_queue = []
+			for q in queue:
+				pos1, pos2 = q
+				if self[pos1].value() in self[pos2].domain:
+					self[pos2].domain.remove(self[pos1].value())
+					if not self[pos2].domain:
+						return False
+					for pos3 in set(self.get_neighbors(pos2)):
+						if pos3 != pos1:
+							new_queue.append((pos2, pos3))
+			queue = new_queue
 		return True

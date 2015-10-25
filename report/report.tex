@@ -239,15 +239,29 @@ We added the $propagate\_constraints$ method to the $gameNode$ class:
 
 \lstset{language=Python}
 \begin{lstlisting}[frame=single]
-def propagate_constraints(self):
+def propagate_constraints(self, updated_pos):
 	# Use AC-3 with all constrained pairs
 	queue = []
-	for pos1 in self.get_positions():
-		for pos2 in self.get_neighbors(pos1):
-			if (pos2, pos1) not in queue:
-				queue.append((pos1, pos2))
+	pos1 = updated_pos
+	for pos2 in self.get_neighbors(pos1):
+		queue.append((pos1, pos2))
 	return self._ac3(queue)
-
+	
+def _ac3(self, queue):
+	# Based on Figure 6.3 from page 209 of the textbook
+	while queue:
+		new_queue = []
+		for q in queue:
+			pos1, pos2 = q
+			if self[pos1].value() in self[pos2].domain:
+				self[pos2].domain.remove(self[pos1].value())
+				if not self[pos2].domain:
+					return False
+				for pos3 in set(self.get_neighbors(pos2)):
+					if pos3 != pos1:
+						new_queue.append((pos2, pos3))
+		queue = new_queue
+	return True
 \end{lstlisting}
 
 The implementation of backtracking + MRV + constraint propagation in $csp.py$ is:
@@ -336,7 +350,7 @@ The result is shown in table \ref{tbl_bench}.
 \subsubsection{Manual Cases}
 
 We added several manual test cases (including the ones provided by Caleb on
-Piazza) to compare the results.
+Piazza) to compare the results. And one of them has conflict input, we added one conflict check at the beginning of all methods based on that.
 
 \subsection{Benchmarks}
 
@@ -346,19 +360,17 @@ Piazza) to compare the results.
 \hline
 & BT & BT+MRV & BT+MRV+FC & BT+MRV+CP & Min-conflicts \\
 \hline
-Empty ($9 \times 9$) & 392 & 82 & 49 & 82 & $>$10K \\
+Empty ($9 \times 9$) & 392 & 82 & 49 & 49 & $>$10K \\
 \hline
-Empty($12 \times 12$) & 7426 & 145 & 95 & 145 & 40 \\
+Empty($12 \times 12$) & 7426 & 145 & 95 & 95 & 40 \\
 \hline
 board1 & 210 & 77 & 74 & 75 & $>$10K \\
 \hline
-board2 & 46019 & 2482 & 2458 & 2451 & $>$10K \\
+board2 & 45804 & 2480 & 2458 & 234 & $>$10K \\
 \hline
-board3 & N/A & 248 & 244 & 239 & $>$10K \\
+board3 & N/A & 248 & 244 & 59 & $>$10K \\
 \hline
-board4 & N/A & N/A & N/A & N/A & N/A \\
-\hline
-board5 & N/A & N/A & N/A & N/A & N/A \\
+board4 & 1 & 1 & 1 & 1 & 1 \\
 \hline
 \end{tabular}
 \caption{Expanded node counts for all algorithms in different test cases}
@@ -382,10 +394,9 @@ the board, and sometimes those choices are not useful ones.
 
 \subsection{Best algorithm}
 
-We recommend using backtracking search with the MRV heuristic and forward checking.
-This algorithm made the fewest consistency checks in our testing. MRV + constraint
-propagation performed roughly the same as MRV by itself, but was much slower.
-(This may be due to an inefficient implementation of constraint propagation.)
+We recommend using backtracking search with the MRV heuristic and constraint
+propagation.
+This algorithm made the fewest consistency checks in our testing. MRV + forward checking is the second best one.
 Min-heuristics sometimes made even fewer consistency checks than BT+MRV+FC, but
 other times it would fail to solve the board.
 
