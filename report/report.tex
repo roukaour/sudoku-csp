@@ -350,7 +350,8 @@ The result is shown in table \ref{tbl_bench}.
 \subsubsection{Manual Cases}
 
 We added several manual test cases (including the ones provided by Caleb on
-Piazza) to compare the results. And one of them has conflict input, we added one conflict check at the beginning of all methods based on that.
+Piazza) to compare the results. One of them has conflicting given values, so we
+added one conflict check at the beginning of all methods based on that.
 
 \subsection{Benchmarks}
 
@@ -364,13 +365,13 @@ Empty ($9 \times 9$) & 392 & 82 & 49 & 49 & $>$10K \\
 \hline
 Empty($12 \times 12$) & 7426 & 145 & 95 & 95 & 40 \\
 \hline
-board1 & 210 & 77 & 74 & 75 & $>$10K \\
+board1 & 159 & 63 & 2 & 2 & $>$10K \\
 \hline
-board2 & 45804 & 2480 & 2458 & 234 & $>$10K \\
+board2 & 45804 & 2480 & 234 & 234 & $>$10K \\
 \hline
-board3 & N/A & 248 & 244 & 59 & $>$10K \\
+board3 & N/A & 248 & 59 & 59 & $>$10K \\
 \hline
-board4 & 1 & 1 & 1 & 1 & 1 \\
+Impossible & 1 & 1 & 1 & 1 & 1 \\
 \hline
 \end{tabular}
 \caption{Expanded node counts for all algorithms in different test cases}
@@ -394,10 +395,11 @@ the board, and sometimes those choices are not useful ones.
 
 \subsection{Best algorithm}
 
-We recommend using backtracking search with the MRV heuristic and constraint
-propagation.
-This algorithm made the fewest consistency checks in our testing. MRV + forward checking is the second best one.
-Min-heuristics sometimes made even fewer consistency checks than BT+MRV+FC, but
+We recommend using backtracking search with the MRV heuristic, and either forward
+checking or constraint propagation. These two algorithms made equally few consistency
+checks in our testing.
+
+Min-conflicts sometimes made even fewer consistency checks than BT+MRV+FC, but
 other times it would fail to solve the board.
 
 \end{document}
